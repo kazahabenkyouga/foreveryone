@@ -1,0 +1,52 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f5f7fb;
+  color: #223;
+}
+
+.container {
+  width: 90%;
+  max-width: 900px;
+  margin: 24px auto;
+}
+
+.page-header h1 {
+  margin-bottom: 8px;
+}
+
+.search-area {
+  margin: 18px 0;
+}
+
+.search-area input {
+  width: 100%;
+  max-width: 360px;
+  padding: 8px;
+}
+
+.department-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap; /* 課題: カードが折り返されず崩れる */
+  gap: 12px;
+  margin-left: 120px; /* 課題: 余白が大きすぎて崩れる */
+}
+
+.department-card {
+  width: 360px; /* 課題: 画面幅で崩れやすい固定幅 */
+  background: #fff;
+  border: 1px solid #d9e2f1;
+  border-radius: 8px;
+  padding: 14px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.department-card h3 {
+  margin-top: 0;
+  margin-bottom: 6px;
+}

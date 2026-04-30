@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>部署紹介モック（学習用）</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div class="container">
+    <header class="page-header">
+      <h1>部署紹介モック</h1>
+      <p>学習用: バグを見つけて修正しよう</p>
+    </header>
+
+    <section class="search-area">
+      <label for="search-input">部署名検索</label>
+      <input id="search-input" type="text" placeholder="例: 開発部">
+    </section>
+
+    <section>
+      <h2>部署一覧</h2>
+      <p id="department-count"></p>
+      <div id="dept-list" class="department-list"></div>
+    </section>
+  </div>
+
+  <script src="./data.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
