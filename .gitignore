@@ -1,18 +1,59 @@
-# OS / Editor
+# ----- OS -----
 .DS_Store
 Thumbs.db
-.vscode/
+desktop.ini
+
+# ----- Editor / IDE -----
 .idea/
+.vscode/
+*.swp
+*.swo
+*~
 
-# Logs
+# ----- Secrets & local env -----
+.env
+.env.*
+!.env.example
+
+# ----- Logs -----
 *.log
-
-# Node/npm cache (if later used for tooling)
-node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
 
-# Python cache (in case local scripts are added)
+# ----- Node.js（全階層の node_modules）-----
+node_modules/
+
+# Vite（ビルド出力・キャッシュ）
+frontend/dist/
+.vite/
+
+# ----- Python（backend およびリポジトリ直下のスクリプト用）-----
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# 仮想環境（どの階層でも名前一致で除外）
+venv/
+.venv/
+ENV/
+env/
+
+# テスト・型・カバレッジ
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+coverage.xml
+*.cover
+
+# パッケージビルド成果物
+*.egg-info/
+.eggs/
+dist/
+build/
+*.egg
