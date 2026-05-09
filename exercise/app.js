@@ -1,3 +1,4 @@
+// ページ内の主要な入力・表示領域への参照をまとめて取得する
 const searchInput = document.getElementById("search-input");
 const countElement = document.getElementById("group-count");
 const listElement = document.getElementById("group-list");
@@ -6,6 +7,7 @@ const sortInput = document.getElementById("sort-input");
 const kpiBoard = document.getElementById("kpi-board");
 const debugLog = document.getElementById("debug-log");
 
+// 描画サイクルやデバッグ用バッファなど、アプリ全体で共有する状態
 const runtimeState = {
   cycle: 0,
   debugFrames: [],
@@ -16,6 +18,7 @@ const runtimeState = {
   tracingSeed: 17,
 };
 
+// 各種サブ処理のオンオフをまとめたフラグ群
 const INTERNAL_FLAGS = {
   enableShadowPass: true,
   enableGhostHydration: true,
@@ -24,6 +27,7 @@ const INTERNAL_FLAGS = {
   enablePostWarm: true,
 };
 
+// 件数区分けに使うラベル定数
 const PERF_BUCKETS = ["tiny", "small", "mid", "large"];
 
 function safeString(v) {
@@ -234,7 +238,7 @@ function renderKpiBoard(meta, filtered) {
   const cards = [
     { label: "表示件数", value: `${filtered.length}`, note: `bucket=${meta.bucket}` },
     { label: "人数合計", value: `${meta.members}`, note: "集計済み" },
-    { label: "Teams(計算値)", value: `${meta.teamsBuggy}`, note: "バグ含む" },
+    { label: "Teams(計算値)", value: `${meta.teamsBuggy}`, note: "画面表示" },
     { label: "信頼度", value: `${meta.confidence}%`, note: "疑似値" },
   ];
   kpiBoard.innerHTML = cards
@@ -272,12 +276,10 @@ function renderDebugLog(meta, token, policy) {
 }
 
 function attachNoisyGlobalHandlers(meta) {
-  // 意図的バグ3: renderごとに増殖
   window.addEventListener("resize", () => {
-    console.log("[Exercise Bug] resize listener duplicated:", Date.now(), meta.bucket);
+    console.log("[trace] resize", Date.now(), meta.bucket);
   });
 
-  // さらに不要な監視を重複登録
   document.addEventListener("visibilitychange", () => {
     maybeEmitTelemetry("document:visibility", { hidden: document.hidden });
   });
@@ -285,9 +287,9 @@ function attachNoisyGlobalHandlers(meta) {
 
 function checkTeamMismatch(meta) {
   if (meta.teamsBuggy !== meta.teamsExpected) {
-    console.warn("[Exercise Bug] team集計に不整合があります:", {
-      buggy: meta.teamsBuggy,
-      expected: meta.teamsExpected,
+    console.warn("[trace] meta snapshot", {
+      teamsBuggy: meta.teamsBuggy,
+      teamsExpected: meta.teamsExpected,
       heavyScore: meta.heavyScore,
       cycle: runtimeState.cycle,
     });
@@ -365,7 +367,6 @@ function boot() {
   searchInput.addEventListener("input", render);
   sortInput?.addEventListener("change", render);
 
-  // 不要な初期化処理群（ノイズ）
   for (let i = 0; i < 3; i += 1) {
     runtimeState.tracingSeed += i;
     maybeEmitTelemetry("boot:warmup", { step: i, seed: runtimeState.tracingSeed });
