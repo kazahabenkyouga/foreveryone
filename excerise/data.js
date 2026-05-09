@@ -1,32 +1,42 @@
-const departmentData = [
-  {
-    id: 1,
-    name: "開発部",
-    description: "Webアプリの新機能開発と保守を担当します。",
-    members: 18
-  },
-  {
-    id: 2,
-    name: "営業部",
-    description: "顧客提案、導入支援、契約管理を担当します。",
-    members: 14
-  },
-  {
-    id: 3,
-    name: "人事部",
-    description: "採用、評価制度、社内研修の企画運用を行います。",
-    members: 7
-  },
-  {
-    id: 4,
-    name: "経理部",
-    description: "予算管理、支払い処理、会計監査対応を担当します。",
-    members: 6
-  },
-  {
-    id: 5,
-    name: "CS部",
-    description: "問い合わせ対応、ナレッジ整備、利用促進を担当します。",
-    members: 10
-  }
-];
+const orgData = {
+  department: "IT部署",
+  mission: "組織を動かすのは、チームだ。",
+  groups: [
+    {
+      id: "grp-infra",
+      label: "INFRA",
+      name: "インフラ基盤グループ",
+      description: "ネットワーク・サーバ・クラウドなど、全社共通の基盤を設計・構築・保守します。",
+      tags: ["#基盤構築", "#可用性", "#クラウド運用"],
+      teams: 2,
+      members: 24,
+    },
+    {
+      id: "grp-sec",
+      label: "SECURITY",
+      name: "セキュリティ・ガバナンスグループ",
+      description: "情報セキュリティポリシー、インシデント対応、コンプライアンス対応を担います。",
+      tags: ["#セキュリティ監視", "#IAM", "#リスク低減"],
+      teams: 2,
+      members: 15,
+    },
+    {
+      id: "grp-app",
+      label: "APPLICATION",
+      name: "アプリケーション開発グループ",
+      description: "社内業務アプリの企画支援、開発、保守を行います。",
+      tags: ["#業務改善", "#内製開発", "#データ活用"],
+      teams: 3,
+      members: 31,
+    },
+    {
+      id: "grp-ops",
+      label: "OPS",
+      name: "サービスデスク・運用グループ",
+      description: "問い合わせ一次対応、変更運用、リリース管理のハブです。",
+      tags: ["#運用設計", "#変更管理", "#ヘルプデスク"],
+      teams: 2,
+      members: 18,
+    },
+  ],
+};

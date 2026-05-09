@@ -3,27 +3,73 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>部署紹介モック（学習用）</title>
+  <meta name="app-mode" content="exercise">
+  <meta name="render-hint" content="client-hydrate">
+  <title>部署紹介サイト（演習用）</title>
   <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-  <div class="container">
-    <header class="page-header">
-      <h1>部署紹介モック</h1>
-      <p>学習用: バグを見つけて修正しよう</p>
-    </header>
-
-    <section class="search-area">
-      <label for="search-input">部署名検索</label>
-      <input id="search-input" type="text" placeholder="例: 開発部">
+  <noscript>JavaScriptを有効にすると演習UIの全機能が利用できます。</noscript>
+  <div id="bootstrap-flags" data-enable-shadow-cache="true" data-render-profile="balanced" hidden></div>
+  <main class="site-root">
+    <section class="hero" data-hero-variant="v2" data-experiment="onboarding-copy-b">
+      <div class="hero-bg" aria-hidden="true"></div>
+      <div class="hero-grid" aria-hidden="true"></div>
+      <div class="container hero-content">
+        <p class="eyebrow">Department Introduction</p>
+        <h1 id="hero-title">それぞれの役割が組織を前に進める。</h1>
+        <p class="hero-sub">Driven by teams.</p>
+      </div>
     </section>
 
-    <section>
-      <h2>部署一覧</h2>
-      <p id="department-count"></p>
-      <div id="dept-list" class="department-list"></div>
+    <section class="section">
+      <div class="container">
+        <header class="section-header">
+          <p class="eyebrow">Exercise Page</p>
+          <h2 class="section-title">組織構造（静的HTML演習）</h2>
+          <p class="section-copy">
+            フロントエンド版のデザインを模倣した学習ページです。検索・並び替え・レンダリングの課題を含みます。
+          </p>
+        </header>
+
+        <section class="search-area" data-search-mode="contains">
+          <label for="search-input">グループ名検索</label>
+          <input id="search-input" type="text" placeholder="例: セキュリティ">
+          <div hidden>
+            <label for="sort-input">並び順</label>
+            <select id="sort-input">
+              <option value="label">ラベル順</option>
+              <option value="members">人数順</option>
+            </select>
+          </div>
+        </section>
+
+        <p id="group-count" class="meta-text"></p>
+        <div id="group-list" class="org-map" aria-live="polite"></div>
+
+        <section class="section-header" style="margin-top:24px">
+          <p class="eyebrow">Supplemental Metrics</p>
+          <h3 class="section-title" style="font-size:24px">補助情報</h3>
+          <p class="section-copy">本来なくても動作する補助表示。演習での原因切り分けを難しくするために表示しています。</p>
+        </section>
+        <div id="kpi-board" class="org-map" aria-label="補助KPIボード"></div>
+        <pre id="debug-log" class="meta-text" style="margin-top:16px; white-space:pre-wrap;"></pre>
+      </div>
     </section>
-  </div>
+  </main>
+
+  <template id="group-card-template">
+    <article class="org-group">
+      <header class="org-group__hero">
+        <p class="org-group__badge"></p>
+        <div class="org-group__icon"></div>
+      </header>
+      <div class="org-group__body">
+        <h3 class="org-group__title"></h3>
+        <p class="org-group__desc"></p>
+      </div>
+    </article>
+  </template>
 
   <script src="./data.js"></script>
   <script src="./app.js"></script>

@@ -1,52 +1,241 @@
-* {
+:root {
+  --bg: #ffffff;
+  --text: #12213d;
+  --muted: #5d6b85;
+  --line: #dce6f8;
+  --blue: #1e5eff;
+}
+
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
+html,
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
-  background: #f5f7fb;
-  color: #223;
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: "Inter", "Noto Sans JP", system-ui, sans-serif;
+}
+
+.site-root {
+  background: linear-gradient(180deg, #fff 0%, #fbfdff 100%);
 }
 
 .container {
-  width: 90%;
-  max-width: 900px;
-  margin: 24px auto;
+  width: min(1100px, 92vw);
+  margin: 0 auto;
 }
 
-.page-header h1 {
-  margin-bottom: 8px;
+.hero {
+  min-height: 52vh;
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 20% 20%, #5f8eff, transparent 40%),
+    radial-gradient(circle at 80% 70%, #2f6bff, transparent 35%),
+    linear-gradient(135deg, #f8fbff, #e9f1ff);
+}
+
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(to right, rgba(30, 94, 255, 0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(30, 94, 255, 0.1) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+.hero-content h1 {
+  margin: 0;
+  font-size: clamp(32px, 5.5vw, 72px);
+}
+
+.hero-sub {
+  margin: 12px 0 0;
+  font-size: clamp(16px, 2vw, 22px);
+  color: #2e4f96;
+}
+
+.section {
+  padding: 72px 0;
+}
+
+.eyebrow {
+  margin: 0 0 10px;
+  color: var(--blue);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.section-title {
+  margin: 0;
+  font-size: clamp(28px, 4vw, 44px);
+}
+
+.section-copy {
+  margin: 10px 0 0;
+  color: var(--muted);
+  line-height: 1.8;
 }
 
 .search-area {
-  margin: 18px 0;
+  margin: 24px 0 14px;
+}
+
+.search-area label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #2a3f6e;
 }
 
 .search-area input {
-  width: 100%;
-  max-width: 360px;
-  padding: 8px;
+  width: min(420px, 100%);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 11px 12px;
+  font-size: 15px;
 }
 
-.department-list {
+.meta-text {
+  color: var(--muted);
+  margin: 8px 0 18px;
+}
+
+.org-map {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.org-group {
+  background: #f8efee;
+  border: 1px solid #e3c6c2;
   display: flex;
-  flex-direction: row;
-  flex-wrap: nowrap; /* 課題: カードが折り返されず崩れる */
-  gap: 12px;
-  margin-left: 120px; /* 課題: 余白が大きすぎて崩れる */
+  flex-direction: column;
+  min-height: 360px;
 }
 
-.department-card {
-  width: 360px; /* 課題: 画面幅で崩れやすい固定幅 */
-  background: #fff;
-  border: 1px solid #d9e2f1;
-  border-radius: 8px;
-  padding: 14px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+.org-group__hero {
+  background: #ead2cf;
+  min-height: 138px;
+  position: relative;
 }
 
-.department-card h3 {
-  margin-top: 0;
-  margin-bottom: 6px;
+.org-group__badge {
+  margin: 0;
+  display: inline-block;
+  background: #1f6feb;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 8px 14px;
+}
+
+.org-group__icon {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #1f6feb;
+  opacity: 0.55;
+}
+
+.org-group__icon svg {
+  width: 60px;
+  height: 60px;
+}
+
+.org-group__body {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.org-group__title {
+  margin: 0 0 8px;
+  color: #b54842;
+  line-height: 1.2;
+}
+
+.org-group__desc {
+  margin: 0 0 12px;
+  color: #4a2a29;
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.org-group__meta {
+  margin: 0 0 10px;
+  color: #8f302b;
+  font-size: 14px;
+}
+
+.org-group__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.org-group__tags span {
+  background: #bf4f48;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 8px;
+}
+
+.org-group__link {
+  margin-top: auto;
+  border: 0;
+  background: transparent;
+  padding: 10px 0 2px;
+  text-align: left;
+  font-weight: 700;
+  color: #5a2320;
+  position: relative;
+  width: fit-content;
+  cursor: pointer;
+}
+
+.org-group__link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: currentColor;
+}
+
+@media (max-width: 1024px) {
+  .org-map {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  .org-map {
+    grid-template-columns: 1fr;
+  }
 }

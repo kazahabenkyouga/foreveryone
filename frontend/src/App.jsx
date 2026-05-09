@@ -1,25 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Hero } from "./Hero.jsx";
-import { Sidebar } from "./Sidebar.jsx";
-import { TeamDetail } from "./TeamDetail.jsx";
-
-const API_BASE = (import.meta.env.VITE_API_BASE || "").replace(/\/$/, "");
-const API_PATH = API_BASE ? `${API_BASE}/department` : "/department";
-
-function pickFirstTeamId(groups) {
-  for (const g of groups || []) {
-    if (g.teams?.length) return g.teams[0].id;
-  }
-  return null;
-}
-
-function findTeamById(groups, teamId) {
-  for (const g of groups || []) {
-    const hit = (g.teams || []).find((t) => t.id === teamId);
-    if (hit) return hit;
-  }
-  return null;
-}
+import { HeroSection } from "./components/hero/HeroSection.jsx";
+import { DepartmentVision } from "./components/layout/DepartmentVision.jsx";
+import { OrganizationStructure } from "./components/organization/OrganizationStructure.jsx";
+import { GroupShowcase } from "./components/groups/GroupShowcase.jsx";
+import { GroupDetailPage } from "./components/groups/GroupDetailPage.jsx";
+import { CultureSection } from "./components/layout/CultureSection.jsx";
+import { fetchDepartment } from "./lib/department.js";
 
 function LoadingShell() {
   return (
@@ -50,26 +36,29 @@ export default function App() {
   const [payload, setPayload] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedTeamId, setSelectedTeamId] = useState(null);
+  const [selectedGroupId, setSelectedGroupId] = useState(null);
+  const [viewMode, setViewMode] = useState("home");
+
+  const setGroupHash = (groupId) => {
+    window.location.hash = groupId ? `group=${groupId}` : "";
+  };
+
+  const parseHash = useCallback(() => {
+    const hash = window.location.hash.replace(/^#/, "");
+    if (hash.startsWith("group=")) {
+      return { mode: "group", groupId: hash.replace("group=", "") };
+    }
+    return { mode: "home", groupId: null };
+  }, []);
 
   const load = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(API_PATH);
-      if (!res.ok) {
-        throw new Error(`HTTP ${res.status}`);
-      }
-      const data = await res.json();
-      const dept = data?.department;
-      if (!dept?.groups) {
-        throw new Error("レスポンス形式が不正です");
-      }
+      const dept = await fetchDepartment();
       setPayload(dept);
-      setSelectedTeamId((current) => {
-        if (current && findTeamById(dept.groups, current)) return current;
-        return pickFirstTeamId(dept.groups);
-      });
+      const firstGroupId = dept.groups?.[0]?.id || null;
+      setSelectedGroupId((current) => current || firstGroupId);
     } catch (e) {
       setError(e?.message || String(e));
       setPayload(null);
@@ -82,16 +71,38 @@ export default function App() {
     load();
   }, [load]);
 
-  const selectedTeam = useMemo(() => {
-    if (!payload?.groups || !selectedTeamId) return null;
-    return findTeamById(payload.groups, selectedTeamId);
-  }, [payload, selectedTeamId]);
+  useEffect(() => {
+    const syncFromHash = () => {
+      const { mode, groupId } = parseHash();
+      setViewMode(mode);
+      if (groupId) setSelectedGroupId(groupId);
+    };
+    syncFromHash();
+    window.addEventListener("hashchange", syncFromHash);
+    return () => window.removeEventListener("hashchange", syncFromHash);
+  }, [parseHash]);
+
+  const selectedGroup = useMemo(() => {
+    if (!payload?.groups || !selectedGroupId) return null;
+    return payload.groups.find((g) => g.id === selectedGroupId) || payload.groups[0] || null;
+  }, [payload, selectedGroupId]);
+
+  const handleOpenGroupPage = (groupId) => {
+    setSelectedGroupId(groupId);
+    setViewMode("group");
+    setGroupHash(groupId);
+  };
+
+  const handleBackHome = () => {
+    setViewMode("home");
+    setGroupHash("");
+  };
 
   if (loading && !payload) {
     return (
-      <div className="page-layout">
-        <Hero />
-        <div id="main-workspace" className="page-layout__workspace">
+      <div className="site-root">
+        <HeroSection />
+        <div className="section">
           <LoadingShell />
         </div>
       </div>
@@ -100,9 +111,9 @@ export default function App() {
 
   if (error && !payload) {
     return (
-      <div className="page-layout">
-        <Hero />
-        <div id="main-workspace" className="page-layout__workspace">
+      <div className="site-root">
+        <HeroSection />
+        <div className="section">
           <div className="error-banner" role="alert">
             <strong>データを取得できませんでした。</strong>
             <br />
@@ -117,28 +128,35 @@ export default function App() {
   }
 
   return (
-    <div className="page-layout">
-      <Hero />
-      <div id="main-workspace" className="page-layout__workspace">
-        <div className="app-shell initial-fade">
-          <Sidebar
-            department={payload}
-            selectedTeamId={selectedTeamId}
-            onSelectTeam={setSelectedTeamId}
+    <div className="site-root">
+      {viewMode !== "group" ? (
+        <HeroSection
+          showGrid={viewMode !== "group"}
+          showBackground={viewMode !== "group"}
+        />
+      ) : null}
+      <main className="content-main">
+        {viewMode === "group" ? (
+          <GroupDetailPage group={selectedGroup} onBack={handleBackHome} />
+        ) : (
+          <>
+          <DepartmentVision department={payload} />
+          <OrganizationStructure
+            groups={payload.groups}
+            activeGroupId={selectedGroup?.id}
+            onSelectGroup={setSelectedGroupId}
+            onOpenGroupPage={handleOpenGroupPage}
           />
-          <main className="app-main">
-            <div className="app-main__inner">
-              <header className="main-header">
-                <p className="main-header__label">選択中のチーム</p>
-                <h2 className="main-header__title">
-                  {selectedTeam ? selectedTeam.name : "—"}
-                </h2>
-              </header>
-              <TeamDetail key={selectedTeam?.id ?? "empty"} team={selectedTeam} />
-            </div>
-          </main>
-        </div>
-      </div>
+          <GroupShowcase
+            groups={payload.groups}
+            activeGroupId={selectedGroup?.id}
+            onSelectGroup={setSelectedGroupId}
+            onOpenGroupPage={handleOpenGroupPage}
+          />
+          <CultureSection />
+          </>
+        )}
+      </main>
     </div>
   );
 }
