@@ -5,6 +5,18 @@ export function HeroSection({ showGrid = true, showBackground = true }) {
     <section className="hero-section" id="top" aria-labelledby="hero-title">
       {showBackground ? <div className="hero-bg" aria-hidden /> : null}
       {showGrid ? <div className="hero-grid" aria-hidden /> : null}
+
+      <header className="hero-header">
+        <div className="container hero-header__inner">
+          <a href="#top" className="hero-brand">部署紹介</a>
+          <nav className="hero-nav" aria-label="Section navigation">
+            <a href="#vision">Vision</a>
+            <a href="#groups">Group</a>
+            <a href="#systems">System</a>
+          </nav>
+        </div>
+      </header>
+
       <div className="container hero-content">
         <motion.p
           className="eyebrow"
@@ -28,6 +40,7 @@ export function HeroSection({ showGrid = true, showBackground = true }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.16 }}
         >
+          新しい一歩を、見通しのよい組織理解から始めましょう。
         </motion.p>
       </div>
     </section>

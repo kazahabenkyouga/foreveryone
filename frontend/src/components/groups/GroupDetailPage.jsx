@@ -1,6 +1,14 @@
 import { motion } from "framer-motion";
 import { GroupIcon } from "./GroupIcon.jsx";
 import { FaqAccordion } from "../common/FaqAccordion.jsx";
+import { CORE_SYSTEMS } from "../layout/CoreSystemSection.jsx";
+
+const GROUP_NAV_LINKS = [
+  { id: "grp-infra", name: "インフラ基盤グループ" },
+  { id: "grp-sec", name: "セキュリティ・ガバナンスグループ" },
+  { id: "grp-app", name: "アプリケーション開発グループ" },
+  { id: "grp-ops", name: "サービスデスク・運用グループ" },
+];
 
 function pickFaq(group) {
   const all = [];
@@ -49,9 +57,17 @@ const DAILY_SCHEDULE = {
   ],
 };
 
+const GROUP_SCHEDULE_IMAGES = {
+  "grp-infra": "/1351.jpg",
+  "grp-sec": "/1352.jpg",
+  "grp-app": "/1353.jpg",
+  "grp-ops": "/1354.jpg",
+};
+
 export function GroupDetailPage({ group, onBack }) {
   if (!group) return null;
   const schedule = DAILY_SCHEDULE[group.id] || DAILY_SCHEDULE["grp-app"];
+  const scheduleImage = GROUP_SCHEDULE_IMAGES[group.id] || "/1351.jpg";
 
   return (
     <section className="section section-group-page">
@@ -93,23 +109,86 @@ export function GroupDetailPage({ group, onBack }) {
           <FaqAccordion items={pickFaq(group)} />
         </section>
 
-        <section className="group-schedule">
+        <section className={`group-schedule group-schedule--${group.id}`}>
           <p className="eyebrow">Daily Schedule</p>
           <h3>1日のスケジュール（9:00 - 17:30）</h3>
-          <div className="group-schedule__timeline" role="list" aria-label={`${group.name} の1日スケジュール`}>
-            {schedule.map((item, idx) => (
-              <article key={`${item.time}-${idx}`} className="schedule-item" role="listitem">
-                <p className="schedule-item__time">{item.time}</p>
-                <div className={`schedule-item__dot${item.time.includes("12:00-13:00") ? " is-break" : ""}`} />
-                <div className="schedule-item__card">
-                  <h4>{item.title}</h4>
-                  <p>{item.detail}</p>
-                </div>
-              </article>
-            ))}
+          <div className="group-schedule__content">
+            <div className="group-schedule__timeline" role="list" aria-label={`${group.name} の1日スケジュール`}>
+              {schedule.map((item, idx) => (
+                <article key={`${item.time}-${idx}`} className="schedule-item" role="listitem">
+                  <p className="schedule-item__time">{item.time}</p>
+                  <div className={`schedule-item__dot${item.time.includes("12:00-13:00") ? " is-break" : ""}`} />
+                  <div className="schedule-item__card">
+                    <h4>{item.title}</h4>
+                    <p>{item.detail}</p>
+                  </div>
+                </article>
+              ))}
+            </div>
+            <aside className="group-schedule__visual" aria-label={`${group.name} の業務イメージ`}>
+              <img src={scheduleImage} alt={`${group.name} の業務イメージ`} loading="lazy" />
+            </aside>
           </div>
         </section>
+
       </div>
+
+      {/* ナビゲーション */}
+      <section className="system-detail-navigation">
+        <div className="container">
+          <h2 className="system-detail-section__title">部署紹介</h2>
+          <div className="system-detail-nav-row">
+
+            <div className="system-detail-nav-block">
+              <div className="system-detail-nav-systems-list">
+                <button
+                  className="system-detail-nav-system-link system-detail-nav-system-link--top"
+                  onClick={() => { window.scrollTo(0, 0); onBack(); }}
+                >
+                  トップページへ戻る
+                </button>
+              </div>
+            </div>
+
+            <div className="system-detail-nav-block">
+              <p className="system-detail-nav-label">基幹システム</p>
+              <div className="system-detail-nav-systems-list">
+                {CORE_SYSTEMS.map((sys) => (
+                  <button
+                    key={sys.id}
+                    className="system-detail-nav-system-link"
+                    onClick={() => {
+                      window.scrollTo(0, 0);
+                      window.location.hash = `system=${sys.id}`;
+                    }}
+                  >
+                    {sys.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="system-detail-nav-block">
+              <p className="system-detail-nav-label">4グループ</p>
+              <div className="system-detail-nav-systems-list">
+                {GROUP_NAV_LINKS.map((grp) => (
+                  <button
+                    key={grp.id}
+                    className="system-detail-nav-system-link"
+                    onClick={() => {
+                      window.scrollTo(0, 0);
+                      window.location.hash = `group=${grp.id}`;
+                    }}
+                  >
+                    {grp.name}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
     </section>
   );
 }

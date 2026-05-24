@@ -1,10 +1,14 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { HeroSection } from "./components/hero/HeroSection.jsx";
 import { DepartmentVision } from "./components/layout/DepartmentVision.jsx";
+import { MissionPage } from "./components/layout/MissionPage.jsx";
 import { OrganizationStructure } from "./components/organization/OrganizationStructure.jsx";
+import { CoreSystemSection } from "./components/layout/CoreSystemSection.jsx";
+import { SystemDetailPage } from "./components/layout/SystemDetailPage.jsx";
 import { GroupShowcase } from "./components/groups/GroupShowcase.jsx";
 import { GroupDetailPage } from "./components/groups/GroupDetailPage.jsx";
 import { CultureSection } from "./components/layout/CultureSection.jsx";
+import { DepartmentNavigationSection } from "./components/layout/DepartmentNavigationSection.jsx";
 import { fetchDepartment } from "./lib/department.js";
 
 function LoadingShell() {
@@ -37,18 +41,33 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedGroupId, setSelectedGroupId] = useState(null);
+  const [selectedSystemId, setSelectedSystemId] = useState(null);
   const [viewMode, setViewMode] = useState("home");
+
+  const scrollToTopInstant = () => {
+    window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+  };
 
   const setGroupHash = (groupId) => {
     window.location.hash = groupId ? `group=${groupId}` : "";
   };
 
+  const setSystemHash = (systemId) => {
+    window.location.hash = systemId ? `system=${systemId}` : "";
+  };
+
   const parseHash = useCallback(() => {
     const hash = window.location.hash.replace(/^#/, "");
     if (hash.startsWith("group=")) {
-      return { mode: "group", groupId: hash.replace("group=", "") };
+      return { mode: "group", groupId: hash.replace("group=", ""), systemId: null };
     }
-    return { mode: "home", groupId: null };
+    if (hash.startsWith("system=")) {
+      return { mode: "system", groupId: null, systemId: hash.replace("system=", "") };
+    }
+    if (hash === "mission") {
+      return { mode: "mission", groupId: null, systemId: null };
+    }
+    return { mode: "home", groupId: null, systemId: null };
   }, []);
 
   const load = useCallback(async () => {
@@ -73,9 +92,10 @@ export default function App() {
 
   useEffect(() => {
     const syncFromHash = () => {
-      const { mode, groupId } = parseHash();
+      const { mode, groupId, systemId } = parseHash();
       setViewMode(mode);
       if (groupId) setSelectedGroupId(groupId);
+      if (systemId) setSelectedSystemId(systemId);
     };
     syncFromHash();
     window.addEventListener("hashchange", syncFromHash);
@@ -88,14 +108,29 @@ export default function App() {
   }, [payload, selectedGroupId]);
 
   const handleOpenGroupPage = (groupId) => {
+    scrollToTopInstant();
     setSelectedGroupId(groupId);
     setViewMode("group");
     setGroupHash(groupId);
   };
 
   const handleBackHome = () => {
+    scrollToTopInstant();
     setViewMode("home");
     setGroupHash("");
+  };
+
+  const handleOpenSystemPage = (systemId) => {
+    scrollToTopInstant();
+    setSelectedSystemId(systemId);
+    setViewMode("system");
+    setSystemHash(systemId);
+  };
+
+  const handleOpenMissionPage = () => {
+    scrollToTopInstant();
+    setViewMode("mission");
+    window.location.hash = "mission";
   };
 
   if (loading && !payload) {
@@ -129,7 +164,7 @@ export default function App() {
 
   return (
     <div className="site-root">
-      {viewMode !== "group" ? (
+      {viewMode === "home" ? (
         <HeroSection
           showGrid={viewMode !== "group"}
           showBackground={viewMode !== "group"}
@@ -138,15 +173,20 @@ export default function App() {
       <main className="content-main">
         {viewMode === "group" ? (
           <GroupDetailPage group={selectedGroup} onBack={handleBackHome} />
+        ) : viewMode === "system" ? (
+          <SystemDetailPage systemId={selectedSystemId} onBack={handleBackHome} />
+        ) : viewMode === "mission" ? (
+          <MissionPage department={payload} onBack={handleBackHome} />
         ) : (
           <>
-          <DepartmentVision department={payload} />
+          <DepartmentVision department={payload} onOpenMissionPage={handleOpenMissionPage} />
           <OrganizationStructure
             groups={payload.groups}
             activeGroupId={selectedGroup?.id}
             onSelectGroup={setSelectedGroupId}
             onOpenGroupPage={handleOpenGroupPage}
           />
+          <CoreSystemSection onOpenSystemPage={handleOpenSystemPage} />
           <GroupShowcase
             groups={payload.groups}
             activeGroupId={selectedGroup?.id}
@@ -154,6 +194,11 @@ export default function App() {
             onOpenGroupPage={handleOpenGroupPage}
           />
           <CultureSection />
+          <DepartmentNavigationSection
+            onGoHome={handleBackHome}
+            onOpenSystemPage={handleOpenSystemPage}
+            onOpenGroupPage={handleOpenGroupPage}
+          />
           </>
         )}
       </main>

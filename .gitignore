@@ -6,6 +6,7 @@ desktop.ini
 # ----- Editor / IDE -----
 .idea/
 .vscode/
+!.vscode/settings.json
 *.swp
 *.swo
 *~
@@ -14,6 +15,12 @@ desktop.ini
 .env
 .env.*
 !.env.example
+
+# 個人メモ・公開しないファイル
+howtoactive
+howtoactive.txt
+README.md
+readme.md
 
 # ----- Logs -----
 *.log
@@ -28,6 +35,13 @@ node_modules/
 # Vite（ビルド出力・キャッシュ）
 frontend/dist/
 .vite/
+frontend/.vite/
+*.tsbuildinfo
+
+# フロントエンドのキャッシュ
+.cache/
+frontend/.cache/
+.eslintcache
 
 # ----- Python（backend およびリポジトリ直下のスクリプト用）-----
 __pycache__/
@@ -46,10 +60,20 @@ env/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+.hypothesis/
+.tox/
+.nox/
 htmlcov/
 .coverage
+.coverage.*
 coverage.xml
 *.cover
+
+# Notebook / 一時ファイル
+.ipynb_checkpoints/
+*.tmp
+*.temp
+*.bak
 
 # パッケージビルド成果物
 *.egg-info/
@@ -57,3 +81,4 @@ coverage.xml
 dist/
 build/
 *.egg
+pip-wheel-metadata/
